@@ -1,0 +1,23 @@
+{
+    "id": "484e717d-2841-4bab-9bbf-6f48d8096965",
+    "name": "Calculate Partners State",
+    "type": "substring",
+    "attributes": {
+        "input": {
+            "attributes": {
+                "attributeName": "Location",
+                "sourceName": "Partner Accounts"
+            },
+            "type": "accountAttribute"
+        },
+        "end": -1.0,
+        "begin": {
+            "attributes": {
+                "substring": ","
+            },
+            "type": "indexOf"
+        },
+        "beginOffset": 2.0
+    },
+    "internal": false
+}

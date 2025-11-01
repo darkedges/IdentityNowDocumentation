@@ -1,0 +1,14 @@
+    {
+        "id": "b23788a0-41a2-453b-89ae-0d670fa0cb6a",
+        "name": "Country Code To Timezone",
+        "type": "lookup",
+        "attributes": {
+            "table": {
+                "EN-US": "CST",
+                "ES-MX": "CST",
+                "EN-GB": "GMT",
+                "default": "GMT"
+            }
+        },
+        "internal": false
+    }

@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE Rule PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<Rule name="ADUserNameGenerator" type="AttributeGenerator">
+  <Description>This will generate a unique username for active directory</Description>
+  <Source><![CDATA[
+        import sailpoint.tools.GeneralException;
+        import sailpoint.object.*;
+        import java.util.ArrayList;
+        import sailpoint.api.*;
+        import java.util.List;
+        import org.apache.commons.lang.StringUtils;
+
+        //Global constant
+        int MAX_USERNAME_LENGTH = 12;
+
+        public String generateUsername(String firstName, String lastName) {
+
+            firstName = StringUtils.trimToNull( firstName );
+            lastName = StringUtils.trimToNull( lastName );
+            String otherName = identity.getStringAttribute("otherName");
+
+            if(firstName != null){
+                firstName = firstName.replaceAll("[^a-zA-Z0-9]", "");
+            }
+
+            if(lastName != null){
+                lastName = lastName.replaceAll("[^a-zA-Z0-9]", "");
+            }
+
+            if(otherName != null){
+                otherName = otherName.replaceAll("[^a-zA-Z0-9]", "");
+            }
+
+            if ( ( firstName == null ) || ( lastName == null ) ){
+                log.debug( "AD Create User Name | Exit from generateADUsername method. No last name and other name for user" );
+                return null;
+            }
+            // If other name is available then we are using firstname as other name
+            if( !StringUtils.isEmpty(otherName) )
+                firstName = otherName;
+
+            // This will hold the final username;
+            String username = null;
+
+            log.debug( "AD Create User Name | Final first name and last name for user: " +firstName + " " +lastName );
+            // This will hold the final username;
+            String finalUserName = null;
+            String fullName = firstName + "." + lastName;
+            String newUsername = lastName;
+
+            if(fullName.length() > MAX_USERNAME_LENGTH) {
+
+                int firstNameLength = firstName.length();
+
+                //Checking if the firstname length is more than the MAX minus 2 chars.
+                //If firstname is more then the MAX minus 2 we are picking MAX minus 2 characters from the firstname.
+                if(firstNameLength > (MAX_USERNAME_LENGTH - 2)){
+                    //lastNameLength represents the current pointer of lastlength.
+                    for(int lastNameLength = 0 ; lastNameLength < lastName.length() ; lastNameLength++){
+                        username = firstName.substring(0,(MAX_USERNAME_LENGTH-2)) + "." + lastName.charAt(lastNameLength);
+                        username = username.toLowerCase();
+                        if( isUnique( username )) {
+                                log.debug( "AD Create User Name | Unique username generated: " +username);
+                                log.debug( "AD Create User Name | Exit from the  GenerateADUsername Method" );
+                                finalUserName = username;
+                                return username;
+                        }
+                    }
+                }
+                //If firstname is less than or equal to the MAX minus 2 chars then we are considering full firstname for username generation.
+                else{
+                    //lastNameLength represents the current pointer of lastlength.
+                    for(int lastNameLength = 0 ; lastNameLength < lastName.length() ; lastNameLength++){
+                        username = firstName + "." + lastName.charAt(lastNameLength);
+                        username = username.toLowerCase();
+                        if( isUnique( username )) {
+                                log.debug( "AD Create User Name | Unique username generated: " +username);
+                                log.debug( "AD Create User Name | Exit from the  GenerateADUsername Method" );
+                                finalUserName = username;
+                                return username;
+                        }
+                    }
+                }
+            } else {
+                //The full name is less than MAX_USERNAME_LENGTH minus 2 chars directly assign username to full name.
+                username = fullName;
+                username = username.toLowerCase();
+                if( isUnique( username ) ) {
+                        log.debug( "AD Create User Name | Unique username generated: " +username);
+                        log.debug( "AD Create User Name | Exit from the  GenerateADUsername Method" );
+                        finalUserName = username;
+                        return username;
+                }
+                else{
+                    //If the username was not unique with firstname.last name we then check uniqueness
+                    // with firstname.firstLetterOfLastName, firstname.secondLetterOfLastName e.t.c...
+                    for(int lastNameLength = 0 ; lastNameLength < lastName.length() ; lastNameLength++){
+                        username = firstName + "." + lastName.charAt(lastNameLength);
+                        username = username.toLowerCase();
+                        if( isUnique( username ) ) {
+                                log.debug( "AD Create User Name | Unique username generated: " +username);
+                                log.debug( "AD Create User Name | Exit from the  GenerateADUsername Method" );
+                                finalUserName = username;
+                                return username;
+                        }
+                    }
+                }
+            }
+
+            if( finalUserName == null ) {
+                log.debug( "AD Create User Name | Exit from the  GenerateADUsername Method without generating username" );return null;
+            }
+            log.debug( "AD Create User Name | Exit from the  GenerateADUsername Method" );
+        }
+
+        public boolean isUnique ( String username ) throws GeneralException {
+            return !idn.accountExistsByDisplayName(application.getName(), username);
+        }
+
+        return generateUsername( identity.getFirstname(), identity.getLastname() );
+  ]]></Source>
+</Rule>

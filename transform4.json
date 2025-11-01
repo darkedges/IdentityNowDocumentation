@@ -1,0 +1,11 @@
+{
+    "id": "484e717d-2841-4bab-9bbf-6f48d8096965",
+    "name": "Substring Transform example",
+    "type": "substring",
+    "attributes": {
+        "begin": 1,
+        "end": 3,
+        "beginOffset": 1,
+        "endOffset": 2
+    }
+}

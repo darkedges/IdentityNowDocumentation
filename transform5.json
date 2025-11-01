@@ -1,0 +1,43 @@
+{
+    "id": "484e717d-2841-4bab-9bbf-6f48d8096965",
+    "name": "Within25days",
+    "type": "static",
+    "attributes": {
+        "Within25Days": {
+            "type": "dateCompare",
+            "attributes": {
+                "firstDate": {
+                    "type": "dateFormat",
+                    "attributes": {
+                        "input": {
+                            "type": "accountAttribute",
+                            "attributes": {
+                                "sourceName": "Example CSV",
+                                "attributeName": "end_date"
+                            }
+                        },
+                        "inputFormat": "yyyy-MM-dd",
+                        "outputFormat": "ISO8601"
+                    }
+                },
+                "secondDate": {
+                    "type": "dateFormat",
+                    "attributes": {
+                        "input": {
+                            "type": "dateMath",
+                            "attributes": {
+                                "expression": "now+25d"
+                            }
+                        },
+                        "inputFormat": "yyyy-MM-dd'T'HH:mm",
+                        "outputFormat": "ISO8601"
+                    }
+                },
+                "operator": "lte",
+                "positiveCondition": "true",
+                "negativeCondition": "false"
+            }
+        },
+        "value": "$Within25Days"
+    }
+}
